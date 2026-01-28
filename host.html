@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>โฮส</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{
+  background:#000;
+  color:#0f0;
+  font-family:'Noto Sans Thai',sans-serif;
+  padding:20px;
+}
+input,button{
+  font-size:18px;
+  padding:10px;
+  margin:6px 0;
+  width:100%;
+  max-width:400px;
+}
+.player{
+  border:1px solid #0f0;
+  border-radius:10px;
+  padding:10px;
+  margin:6px 0;
+}
+</style>
+</head>
+<body>
+
+<h2>👑 โฮส (พระเจ้า)</h2>
+
+<input id="room" placeholder="รหัสห้อง (เช่น 1234)">
+<button onclick="createRoom()">สร้าง / เข้าห้อง</button>
+
+<h3>ผู้เล่นในห้อง</h3>
+<div id="players">ยังไม่มีผู้เล่น</div>
+
+<script type="module">
+import { db } from './firebase.js';
+import { ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+window.createRoom = function(){
+  const room = document.getElementById('room').value;
+  if(!room) return;
+  set(ref(db,'rooms/'+room+'/started'), false);
+  onValue(ref(db,'rooms/'+room+'/players'), snap=>{
+    const box=document.getElementById('players');
+    box.innerHTML='';
+    if(!snap.exists()){
+      box.innerText='ยังไม่มีผู้เล่น';
+      return;
+    }
+    Object.values(snap.val()).forEach(p=>{
+      box.innerHTML+=`<div class="player">${p.name} | บทบาท: ${p.role}</div>`;
+    });
+  });
+}
+</script>
+
+</body>
+</html>

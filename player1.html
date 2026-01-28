@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ผู้เล่น</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{
+  background:#111;
+  color:#fff;
+  font-family:'Noto Sans Thai',sans-serif;
+  text-align:center;
+  padding:20px;
+}
+input,button{
+  font-size:18px;
+  padding:10px;
+  margin:6px;
+  width:90%;
+  max-width:300px;
+}
+.card{
+  margin:40px auto;
+  width:220px;
+  height:320px;
+  border-radius:18px;
+  background:#000;
+  border:3px solid #555;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:26px;
+  color:#0f0;
+}
+</style>
+</head>
+<body>
+
+<h2>🃏 ผู้เล่น</h2>
+
+<input id="room" placeholder="รหัสห้อง">
+<input id="name" placeholder="ชื่อเล่น">
+<button onclick="join()">เข้าเกม</button>
+
+<div class="card" id="card">ไพ่ของคุณ</div>
+
+<script type="module">
+import { db } from './firebase.js';
+import { ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+window.join=function(){
+  const room=document.getElementById('room').value;
+  const name=document.getElementById('name').value;
+  if(!room||!name)return;
+
+  const roles=["หมาป่า","ชาวบ้าน","หมอ","ผู้ทำนาย"];
+  const role=roles[Math.floor(Math.random()*roles.length)];
+
+  set(ref(db,'rooms/'+room+'/players/'+name),{name,role});
+  document.getElementById('card').innerText=role;
+}
+</script>
+
+</body>
+</html>
